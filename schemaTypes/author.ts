@@ -1,16 +1,17 @@
-import {defineField, defineType} from 'sanity'
+import {Rule} from 'sanity'
 
-export default defineType({
+export default {
   name: 'author',
   title: 'Author',
   type: 'document',
   fields: [
-    defineField({
+    {
       name: 'name',
       title: 'Name',
       type: 'string',
-    }),
-    defineField({
+      validation: (rule: Rule) => rule.required(),
+    },
+    {
       name: 'slug',
       title: 'Slug',
       type: 'slug',
@@ -18,33 +19,56 @@ export default defineType({
         source: 'name',
         maxLength: 96,
       },
-    }),
-    defineField({
-      name: 'image',
-      title: 'Image',
-      type: 'image',
-      options: {
-        hotspot: true,
-      },
-    }),
-    defineField({
+      validation: (rule: Rule) => rule.required(),
+    },
+    {
+      name: 'role',
+      title: 'Role / Title',
+      type: 'string',
+      description: 'e.g. Founder, Music Director, Guest Writer',
+    },
+    {
       name: 'bio',
-      title: 'Bio',
+      title: 'Short bio',
+      type: 'text',
+      rows: 3,
+    },
+    {
+      name: 'avatar',
+      title: 'Avatar',
+      type: 'image',
+      options: {hotspot: true},
+    },
+    {
+      name: 'socialLinks',
+      title: 'Social links',
       type: 'array',
       of: [
         {
-          title: 'Block',
-          type: 'block',
-          styles: [{title: 'Normal', value: 'normal'}],
-          lists: [],
+          type: 'object',
+          fields: [
+            {
+              name: 'platform',
+              title: 'Platform',
+              type: 'string',
+              description: 'e.g. X (Twitter), YouTube, Instagram',
+            },
+            {
+              name: 'url',
+              title: 'URL',
+              type: 'url',
+              validation: (rule: Rule) => rule.uri({scheme: ['http', 'https']}),
+            },
+          ],
         },
       ],
-    }),
+    },
   ],
   preview: {
     select: {
       title: 'name',
-      media: 'image',
+      subtitle: 'role',
+      media: 'avatar',
     },
   },
-})
+}
